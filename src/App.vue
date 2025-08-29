@@ -3,7 +3,7 @@
     <TodoHeader></TodoHeader>
     <TodoInput v-on:addTodoList="propagateProps"></TodoInput>
     <TodoList v-bind:items="totalItems" v-on:toggle-complete="toggleComplete" v-on:remove-todo="removeTodo"></TodoList>
-    <TodoFooter v-on:clearAllList="clearAllList"></TodoFooter>
+    <TodoFooter v-on:clearAllList="clearAllList" v-bind:items="totalItems"></TodoFooter>
   </div>
 </template>
 
@@ -20,13 +20,13 @@ export default {
     TodoList,
     TodoInput,
   },
-  data : function () {
+  data() {
     return {
       todoItems: []
     }
   },
   computed: {
-    totalItems: function() {
+    totalItems() {
       return [...this.todoItems].sort((a, b) => {
         if (!a.regdt) return 1
         if (!b.regdt) return -1     
@@ -34,12 +34,12 @@ export default {
       })
     }
   },
-  mounted: function() {
+  mounted() {
     const that = this
     that.refreshList();
   },
   methods: {
-    refreshList: function() {
+    refreshList() {
         this.todoItems = [];
         const copiedLocalStorages = Object.fromEntries(
             Object.keys(localStorage).map(k => {
@@ -50,15 +50,15 @@ export default {
             this.todoItems.push({...JSON.parse(localStorage.getItem(key))})
         }  
     },
-    clearAllList: function() {
+    clearAllList() {
         this.todoItems = []
         localStorage.clear()
     },
-    propagateProps: function(v) {
+    propagateProps(v) {
         this.todoItems.push(v);
         localStorage.setItem(v.uuid, JSON.stringify(v));
     },
-    removeTodo: function(uuid) {
+    removeTodo(uuid) {
       console.log("remove Todo~~~", uuid);
       const idx = this.todoItems.findIndex(f => f.uuid === uuid)
       if( idx !== -1 ) {
@@ -66,7 +66,7 @@ export default {
         localStorage.removeItem(uuid);
       }
     },
-    toggleComplete: function(uuid) {
+    toggleComplete(uuid) {
       console.log("toggleComplete~~~~");
       
       const idx = this.todoItems.findIndex(f => f.uuid === uuid)
