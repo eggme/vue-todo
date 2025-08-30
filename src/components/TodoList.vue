@@ -1,7 +1,7 @@
 <template>
   <div>
-    <transition-group name="list" tag="ul">
-        <li  v-for="(item, i) in items" v-bind:key="i" class="shadow">
+    <transition-group name="list" tag="ul" class="todo-list">
+        <li  v-for="(item, i) in totalItems" v-bind:key="i" class="shadow todo-item">
             <span class="todoItem" v-on:click="toggleCompelte(item.uuid)">
                 <span class="checkBtn" v-bind:class="{checkBtnCompleted:item.completed}"> <!-- v-bind:class로 해당 값이 true일 떄만 클래스를 추가하거나 삭제할 수 있음 -->
                     <i class="fa-solid fa-check"></i>
@@ -69,11 +69,10 @@
 
 <script>
 import CommonModal from './common/CommonModal.vue';
-
+import { mapGetters } from 'vuex';
 
 
 export default {
-    props: ["items"],
     data() {
         return {
             showModal: false,
@@ -82,6 +81,9 @@ export default {
     },
     components: {
         CommonModal
+    },
+    computed: {
+      ...mapGetters(['totalItems'])
     },
     methods: {
         closeModal() {
@@ -93,10 +95,10 @@ export default {
         },
         removeTodo() {
             this.showModal = false
-            this.$emit('remove-todo', this.removeTargetUuid)
+            this.$store.commit('removeItem', this.removeTargetUuid); // mutations은 무조건 commit 으로 실행
         },
         toggleCompelte(uuid) {
-            this.$emit('toggle-complete', uuid)
+            this.$store.commit('toggleComplete', uuid)
         },
     }
 }
@@ -127,6 +129,7 @@ li {
 }
 .todoItem {
     flex: 1;
+    position: relative;
 }
 .todoItem:hover .checkBtn {
     color : #ff6161;
@@ -143,9 +146,12 @@ li {
     color : #de4343;
 }
 
+.todo-list {
+  position: relative;
+}
 /* 리스트 아이템 트렌지션 효과 */
 .list-enter-active, .list-leave-active {
-  transition: all 1s;
+  transition: all 1s ease;
 }
 .list-enter, .list-leave-to /* .list-leave-active below version 2.1.8 */ {
   opacity: 0;

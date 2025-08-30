@@ -43,7 +43,7 @@ export default {
                     value : this.todoValue,
                     regdt : new Date()
                 }
-                this.$emit('addTodoList', obj)
+                this.$store.commit('pushItem', obj)
                 this.clearInput()
             } else {
                 this.showModal = true

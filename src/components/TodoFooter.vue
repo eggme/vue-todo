@@ -5,16 +5,17 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 export default {
-    props: ["items"],
     computed: {
+        ...mapGetters(['totalItems']),
         showClearBtn() {
-            return this.items.length > 0
+            return this.totalItems.length > 0
         }
     },
     methods: {
         clearAll() {
-            this.$emit('clearAllList')
+            this.$store.commit('clearItems')
         }
     },
 }
