@@ -2,7 +2,7 @@
   <div>
     <transition-group name="list" tag="ul" class="todo-list">
         <li  v-for="(item, i) in totalItems" v-bind:key="i" class="shadow todo-item">
-            <span class="todoItem" v-on:click="toggleCompelte(item.uuid)">
+            <span class="todoItem" v-on:click="toggleComplete(item.uuid)">
                 <span class="checkBtn" v-bind:class="{checkBtnCompleted:item.completed}"> <!-- v-bind:class로 해당 값이 true일 떄만 클래스를 추가하거나 삭제할 수 있음 -->
                     <i class="fa-solid fa-check"></i>
                 </span>
@@ -17,7 +17,7 @@
         
         <h3 slot="header">
             경고!
-            <i class="fa-solid fa-xmark closeModalBtn"></i>
+            <!-- <i class="fa-solid fa-xmark closeModalBtn"></i> -->
             </h3> <!-- slot 은 Vue의 기능인데, 컴포넌트의 일부 UI들을 재사용할 수 있는 기능 -->
         <p slot="body">정말 지우시겠습니까?</p>
         <div slot="footer" style="display:flex;">
@@ -69,7 +69,7 @@
 
 <script>
 import CommonModal from './common/CommonModal.vue';
-import { mapGetters } from 'vuex';
+import { mapGetters, mapMutations } from 'vuex';
 
 
 export default {
@@ -83,7 +83,11 @@ export default {
         CommonModal
     },
     computed: {
-      ...mapGetters(['totalItems'])
+      ...mapGetters({
+        totalItems: 'totalItems',
+        // 위와 아래는 같음
+      })
+      // ...mapGetters(['totalItems'])
     },
     methods: {
         closeModal() {
@@ -93,12 +97,11 @@ export default {
             this.removeTargetUuid = uuid
             this.showModal = !this.showModal
         },
+        ...mapMutations(['removeItem', 'toggleComplete']),
         removeTodo() {
             this.showModal = false
-            this.$store.commit('removeItem', this.removeTargetUuid); // mutations은 무조건 commit 으로 실행
-        },
-        toggleCompelte(uuid) {
-            this.$store.commit('toggleComplete', uuid)
+            this.removeItem(this.removeTargetUuid)
+            // this.$store.commit('removeItem', this.removeTargetUuid); // mutations은 무조건 commit 으로 실행
         },
     }
 }

@@ -20,6 +20,7 @@
 
 <script>
 import CommonModal from './common/CommonModal.vue'
+import { mapMutations } from 'vuex'
 
 export default {
     data() {
@@ -32,6 +33,7 @@ export default {
         CommonModal
     },
     methods: {
+        ...mapMutations(['pushItem']),
         closeModal() {
             this.showModal = false
         },
@@ -43,7 +45,7 @@ export default {
                     value : this.todoValue,
                     regdt : new Date()
                 }
-                this.$store.commit('pushItem', obj)
+                this.pushItem(obj)
                 this.clearInput()
             } else {
                 this.showModal = true
